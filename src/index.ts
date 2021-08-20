@@ -1,69 +1,88 @@
 import * as Joi from 'joi'
-import { Stats } from './types';
+import { Stats, StatsKeys } from './types';
 
 export default class StatsService {
-  private stats: Stats
-  private statsKeys
+  private stats: Stats;
+  public statsKeys: StatsKeys;
 
-  constructor() {
-    this.stats = {}
+  constructor(serviceName: string, serviceKeysList: string[]) {
+    this.stats = {};
     // The object holding the stats keys for the service utilizing this lib
-    this.statsKeys = {}
+    this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
+  }
+
+  /**
+   * The service integrating this module passes a list of stats keys (for convenience).
+   * This function constructs an object out of that list, so the stats keys can be accessed easily.
+   *
+   * @param {string}  serviceName
+   * @param {string}  serviceKeysList
+   * @return  {StatsKeys}
+   */
+  constructStatsKeysObj(serviceName: string, serviceKeysList: string[]): StatsKeys {
+    const statsKeys: StatsKeys = {};
+
+    for (const key of serviceKeysList) {
+      const statKey = `${serviceName}_${key}`;
+      statsKeys[statKey] = statKey;
+    }
+
+    return Object.freeze(statsKeys);
   }
 
   /**
    * Sets a given stat key with a given value
    *
-   * @param key
-   * @param value
+   * @param {string}  key
+   * @param {number}  value
    */
-  setStat(key, value): void {
+  setStat(key: string, value: number): void {
     if (!key) {
-      throw new Error('Stats key not provided')
+      throw new Error('Stats key not provided');
     }
 
-    const { value: validValue, error } = Joi.number().required().validate(value)
+    const { value: validValue, error } = Joi.number().required().validate(value);
     if (error) {
-      throw new Error(error.message)
+      throw new Error(error.message);
     }
-    this.stats[key] = validValue
+    this.stats[key] = validValue;
   }
 
   /**
    * Returns the value of the given stat. If not present, return 0.
    *
-   * @param key
+   * @param {string}  key
    * @return {number}
    */
-  getStat(key): number {
+  getStat(key: string): number {
     if (!key) {
-      throw new Error('Stats key not provided')
+      throw new Error('Stats key not provided');
     }
-    return this.stats[key] || 0
+    return this.stats[key] || 0;
   }
 
   /**
    * Increments the stat value. If the stat key isn't set yet, set it.
    *
-   * @param key
+   * @param {string}  key
    */
-  incrementStat(key): void {
+  incrementStat(key: string): void {
     if (!key) {
-      throw new Error('Stats key not provided')
+      throw new Error('Stats key not provided');
     }
-    this.stats[key] = (this.stats[key] || 0) + 1
+    this.stats[key] = (this.stats[key] || 0) + 1;
   }
 
   /**
    * Decrements the stat value. If the stat key isn't set yet, set it.
    *
-   * @param key
+   * @param {string}  key
    */
-  decrementStat(key): void {
+  decrementStat(key: string): void {
     if (!key) {
-      throw new Error('Stats key not provided')
+      throw new Error('Stats key not provided');
     }
-    this.stats[key] = (this.stats[key] || 0) - 1
+    this.stats[key] = (this.stats[key] || 0) - 1;
   }
 
   /**
@@ -74,15 +93,17 @@ export default class StatsService {
    * @return {{stats: {}}}
    */
   getAllStats(): { stats: Stats } {
-    return { stats: this.stats }
+    return { stats: this.stats };
   }
 
   /**
-   * Clears the `stats` in-mem object. Used for automated tests only!
+   * Clears the `stats` in-mem object.
+   *
+   * NOTE: Used for automated tests only!
    *
    * @private
    */
   _clearStats(): void {
-    this.stats = {}
+    this.stats = {};
   }
 }
