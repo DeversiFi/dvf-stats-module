@@ -1,0 +1,25 @@
+{
+  "name": "stats-module",
+  "version": "0.0.1",
+  "description": "Tiny module defining functionality to declare and set stats of services activity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/DeversiFi/stats-module.git"
+  },
+  "keywords": [
+    "stats",
+    "module",
+    "deversifi",
+    "dvf"
+  ],
+  "author": "Galin Kostov <galin.kostov@deversifi.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DeversiFi/stats-module/issues"
+  },
+  "homepage": "https://github.com/DeversiFi/stats-module#readme"
+}
