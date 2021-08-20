@@ -1,5 +1,5 @@
 "use strict";
-const statsService = require('./index');
+const statsService = require('../src/index');
 describe('stats service', function () {
     const testStatKey = 'test_stat';
     beforeEach(() => {
