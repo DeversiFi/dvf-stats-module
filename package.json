@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "Tiny module defining functionality to declare and set stats of services activity",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/DeversiFi/stats-module.git"
@@ -21,5 +18,25 @@
   "bugs": {
     "url": "https://github.com/DeversiFi/stats-module/issues"
   },
-  "homepage": "https://github.com/DeversiFi/stats-module#readme"
+  "homepage": "https://github.com/DeversiFi/stats-module#readme",
+  "bin": {
+    "index": "dist/src/index.js"
+  },
+  "scripts": {
+    "test": "mocha --require ts-node/register/transpile-only --config .mocharc.js test/",
+    "clean": "rm -rf ./dist",
+    "make": "yarn clean && tsc --pretty --project ./tsconfig.json"
+  },
+  "dependencies": {
+    "joi": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.6.2",
+    "chai": "^4.3.4",
+    "mocha": "^9.1.0",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.5"
+  }
 }
