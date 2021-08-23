@@ -3,29 +3,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
 class StatsService {
     /**
-     * This class implements the Singleton design pattern. Therefore, the constructor should always be private to prevent
-     * direct construction calls with the `new` operator.
-     *
-     * @param {string}    serviceName
-     * @param {string[]}  serviceKeysList
-     * @private
-     */
-    constructor(serviceName, serviceKeysList) {
-        this.stats = {};
-        // The object holding the stats keys for the service utilizing this lib
-        this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
-    }
-    /**
-     * The static method that controls the access to the singleton instance.
+     * This class implements the Singleton design pattern. Therefore, actually assign its initialized obj to a property
+     * and return that.
      *
      * @param {string}    serviceName
      * @param {string[]}  serviceKeysList
      * @return {StatsService}
      */
-    static getInstance(serviceName, serviceKeysList) {
+    constructor(serviceName, serviceKeysList) {
         if (!StatsService.instance) {
-            StatsService.instance = new StatsService(serviceName, serviceKeysList);
+            this.stats = {};
+            // The object holding the stats keys for the service utilizing this lib
+            this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
+            StatsService.instance = this;
         }
+        return StatsService.instance;
+    }
+    /**
+     * The static method that controls the access to the singleton instance.
+     *
+     * @return {StatsService}
+     */
+    static getInstance() {
         return StatsService.instance;
     }
     /**
