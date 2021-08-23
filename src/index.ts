@@ -7,31 +7,30 @@ export default class StatsService {
   public statsKeys: StatsKeys;
 
   /**
-   * This class implements the Singleton design pattern. Therefore, the constructor should always be private to prevent
-   * direct construction calls with the `new` operator.
-   *
-   * @param {string}    serviceName
-   * @param {string[]}  serviceKeysList
-   * @private
-   */
-  private constructor(serviceName: string, serviceKeysList: string[]) {
-    this.stats = {};
-    // The object holding the stats keys for the service utilizing this lib
-    this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
-  }
-
-  /**
-   * The static method that controls the access to the singleton instance.
+   * This class implements the Singleton design pattern. Therefore, actually assign its initialized obj to a property
+   * and return that.
    *
    * @param {string}    serviceName
    * @param {string[]}  serviceKeysList
    * @return {StatsService}
    */
-  static getInstance(serviceName: string, serviceKeysList: string[]): StatsService {
+  constructor(serviceName: string, serviceKeysList: string[]) {
     if (!StatsService.instance) {
-      StatsService.instance = new StatsService(serviceName, serviceKeysList);
+      this.stats = {};
+      // The object holding the stats keys for the service utilizing this lib
+      this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
+      StatsService.instance = this;
     }
 
+    return StatsService.instance;
+  }
+
+  /**
+   * The static method that controls the access to the singleton instance.
+   *
+   * @return {StatsService}
+   */
+  static getInstance(): StatsService {
     return StatsService.instance;
   }
 
@@ -39,8 +38,8 @@ export default class StatsService {
    * The service integrating this module passes a list of stats keys (for convenience).
    * This function constructs an object out of that list, so the stats keys can be accessed easily.
    *
-   * @param {string}  serviceName
-   * @param {string}  serviceKeysList
+   * @param {string}    serviceName
+   * @param {string[]}  serviceKeysList
    * @return  {StatsKeys}
    */
   constructStatsKeysObj(serviceName: string, serviceKeysList: string[]): StatsKeys {

@@ -32,8 +32,8 @@ class StatsService {
      * The service integrating this module passes a list of stats keys (for convenience).
      * This function constructs an object out of that list, so the stats keys can be accessed easily.
      *
-     * @param {string}  serviceName
-     * @param {string}  serviceKeysList
+     * @param {string}    serviceName
+     * @param {string[]}  serviceKeysList
      * @return  {StatsKeys}
      */
     constructStatsKeysObj(serviceName, serviceKeysList) {
