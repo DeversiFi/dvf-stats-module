@@ -2,14 +2,14 @@ import StatsService from '../src/index';
 
 describe('stats service', function () {
   const testStatKey = 'test_stat';
-  const statsService = new StatsService('stats_service', ['test_stat']);
+  const statsService = new StatsService(['test_stat']);
 
   beforeEach(() => {
     statsService._clearStats();
   })
 
   it('should be identical instance at subsequent initializations, proving the Singleton pattern', function () {
-    const anotherStatsServiceInst = new StatsService('some_new_service', ['other_stats_yooo']);
+    const anotherStatsServiceInst = new StatsService(['other_stats_yooo']);
 
     anotherStatsServiceInst.getAllStats().should.deep.equal(statsService.getAllStats());
   })
