@@ -1,89 +1,119 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Joi = require("joi");
-let stats = {};
-/**
- * Sets a given stat key with a given value
- *
- * @param key
- * @param value
- */
-function setStat(key, value) {
-    if (!key) {
-        throw new Error('Stats key not provided');
+class StatsService {
+    /**
+     * This class implements the Singleton design pattern. Therefore, the constructor should always be private to prevent
+     * direct construction calls with the `new` operator.
+     *
+     * @param {string}    serviceName
+     * @param {string[]}  serviceKeysList
+     * @private
+     */
+    constructor(serviceName, serviceKeysList) {
+        this.stats = {};
+        // The object holding the stats keys for the service utilizing this lib
+        this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
     }
-    const { value: validValue, error } = Joi.number().required().validate(value);
-    if (error) {
-        throw new Error(error.message);
+    /**
+     * The static method that controls the access to the singleton instance.
+     *
+     * @param {string}    serviceName
+     * @param {string[]}  serviceKeysList
+     * @return {StatsService}
+     */
+    static getInstance(serviceName, serviceKeysList) {
+        if (!StatsService.instance) {
+            StatsService.instance = new StatsService(serviceName, serviceKeysList);
+        }
+        return StatsService.instance;
     }
-    stats[key] = validValue;
-}
-/**
- * Returns the value of the given stat. If not present, return 0.
- *
- * @param key
- * @return {number}
- */
-function getStat(key) {
-    if (!key) {
-        throw new Error('Stats key not provided');
+    /**
+     * The service integrating this module passes a list of stats keys (for convenience).
+     * This function constructs an object out of that list, so the stats keys can be accessed easily.
+     *
+     * @param {string}  serviceName
+     * @param {string}  serviceKeysList
+     * @return  {StatsKeys}
+     */
+    constructStatsKeysObj(serviceName, serviceKeysList) {
+        const statsKeys = {};
+        for (const key of serviceKeysList) {
+            const statKey = `${serviceName}_${key}`;
+            statsKeys[statKey] = statKey;
+        }
+        return Object.freeze(statsKeys);
     }
-    return stats[key] || 0;
-}
-/**
- * Increments the stat value. If the stat key isn't set yet, set it.
- *
- * @param key
- */
-function incrementStat(key) {
-    if (!key) {
-        throw new Error('Stats key not provided');
+    /**
+     * Sets a given stat key with a given value
+     *
+     * @param {string}  key
+     * @param {number}  value
+     */
+    setStat(key, value) {
+        if (!key) {
+            throw new Error('Stats key not provided');
+        }
+        const { value: validValue, error } = Joi.number().required().validate(value);
+        if (error) {
+            throw new Error(error.message);
+        }
+        this.stats[key] = validValue;
     }
-    stats[key] = (stats[key] || 0) + 1;
-}
-/**
- * Decrements the stat value. If the stat key isn't set yet, set it.
- *
- * @param key
- */
-function decrementStat(key) {
-    if (!key) {
-        throw new Error('Stats key not provided');
+    /**
+     * Returns the value of the given stat. If not present, return 0.
+     *
+     * @param {string}  key
+     * @return {number}
+     */
+    getStat(key) {
+        if (!key) {
+            throw new Error('Stats key not provided');
+        }
+        return this.stats[key] || 0;
     }
-    stats[key] = (stats[key] || 0) - 1;
+    /**
+     * Increments the stat value. If the stat key isn't set yet, set it.
+     *
+     * @param {string}  key
+     */
+    incrementStat(key) {
+        if (!key) {
+            throw new Error('Stats key not provided');
+        }
+        this.stats[key] = (this.stats[key] || 0) + 1;
+    }
+    /**
+     * Decrements the stat value. If the stat key isn't set yet, set it.
+     *
+     * @param {string}  key
+     */
+    decrementStat(key) {
+        if (!key) {
+            throw new Error('Stats key not provided');
+        }
+        this.stats[key] = (this.stats[key] || 0) - 1;
+    }
+    /**
+     * Return the `stats` object, nested in an object.
+     * This schema is required by the stats-collecting agent we use.
+     * More info here: https://darcs.atlassian.net/wiki/spaces/DEVELOPMEN/pages/5505224/Grafana
+     *
+     * @return {{stats: {}}}
+     */
+    getAllStats() {
+        return { stats: this.stats };
+    }
+    /**
+     * Clears the `stats` in-mem object.
+     *
+     * NOTE: Used for automated tests only!
+     *
+     * @private
+     */
+    _clearStats() {
+        this.stats = {};
+    }
 }
-/**
- * Return the `stats` object, nested in an object.
- * This schema is required by the stats-collecting agent we use.
- * More info here: https://darcs.atlassian.net/wiki/spaces/DEVELOPMEN/pages/5505224/Grafana
- *
- * @return {{stats: {}}}
- */
-function getAllStats() {
-    return { stats };
-}
-/**
- * The object holding the stats keys for the service utilizing this lib
- */
-const statsKeys = {
-    'bfxSync': 'bfx_sync_total_candles_synced'
-};
-/**
- * Clears the `stats` in-mem object. Used for automated tests only!
- *
- * @private
- */
-function _clearStats() {
-    stats = {};
-}
-module.exports = {
-    setStat,
-    getStat,
-    incrementStat,
-    decrementStat,
-    getAllStats,
-    statsKeys,
-    // used for automated tests
-    _clearStats
-};
+exports.default = StatsService;
 //# sourceMappingURL=index.js.map

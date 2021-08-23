@@ -2,13 +2,37 @@ import * as Joi from 'joi'
 import { Stats, StatsKeys } from './types';
 
 export default class StatsService {
+  private static instance: StatsService;
   private stats: Stats;
   public statsKeys: StatsKeys;
 
-  constructor(serviceName: string, serviceKeysList: string[]) {
+  /**
+   * This class implements the Singleton design pattern. Therefore, the constructor should always be private to prevent
+   * direct construction calls with the `new` operator.
+   *
+   * @param {string}    serviceName
+   * @param {string[]}  serviceKeysList
+   * @private
+   */
+  private constructor(serviceName: string, serviceKeysList: string[]) {
     this.stats = {};
     // The object holding the stats keys for the service utilizing this lib
     this.statsKeys = this.constructStatsKeysObj(serviceName, serviceKeysList);
+  }
+
+  /**
+   * The static method that controls the access to the singleton instance.
+   *
+   * @param {string}    serviceName
+   * @param {string[]}  serviceKeysList
+   * @return {StatsService}
+   */
+  static getInstance(serviceName: string, serviceKeysList: string[]): StatsService {
+    if (!StatsService.instance) {
+      StatsService.instance = new StatsService(serviceName, serviceKeysList);
+    }
+
+    return StatsService.instance;
   }
 
   /**
