@@ -4,23 +4,20 @@ import { Stats, StatsKeys } from './types';
 class StatsService {
   private static instance: StatsService;
   private stats: Stats;
-  private serviceName: string;
   public statsKeys: StatsKeys;
 
   /**
    * This class implements the Singleton design pattern. Therefore, actually assign its initialized obj to a property
    * and return that.
    *
-   * @param {string}    serviceName
    * @param {string[]}  metricKeysList
    * @return {StatsService}
    */
-  constructor(serviceName: string, metricKeysList: string[]) {
+  constructor(metricKeysList: string[]) {
     if (!StatsService.instance) {
-      this.serviceName = serviceName;
       this.stats = {};
       // The object holding the stats keys for the service utilizing this lib
-      this.statsKeys = this.constructStatsKeysObj(serviceName, metricKeysList);
+      this.statsKeys = this.constructStatsKeysObj(metricKeysList);
       StatsService.instance = this;
     }
 
@@ -40,33 +37,19 @@ class StatsService {
    * The service integrating this module passes a list of metrics keys (for convenience).
    * This function constructs an object out of that list, so the stats keys can be accessed easily.
    *
-   * @param {string}    serviceName
    * @param {string[]}  metricKeysList
    * @return  {StatsKeys}
    */
-  constructStatsKeysObj(serviceName: string, metricKeysList: string[]): StatsKeys {
+  constructStatsKeysObj(metricKeysList: string[]): StatsKeys {
     const statsKeys: StatsKeys = {};
 
     for (const key of metricKeysList) {
-      const statKey = `${serviceName}_${key}`;
-      statsKeys[statKey] = statKey;
-
+      statsKeys[key] = key;
       // Also, initialize each key with value of 0.
-      this.setStat(statKey, 0);
+      this.setStat(key, 0);
     }
 
     return Object.freeze(statsKeys);
-  }
-
-  /**
-   * Constructs and returns a stat key for a given metric out of the service name and the metric itself.
-   * This is needed, since we store the keys as a combination of the service name and the metrics.
-   *
-   * @param {string} metric
-   * @return {string}
-   */
-  getStatKey(metric: string): string {
-    return `${this.serviceName}_${metric}`;
   }
 
   /**
