@@ -1,7 +1,7 @@
 import * as Joi from 'joi'
 import { Stats, StatsKeys } from './types';
 
-export default class StatsService {
+export class StatsService {
   private static instance: StatsService;
   private stats: Stats;
   public statsKeys: StatsKeys;

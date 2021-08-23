@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StatsService = void 0;
 const Joi = require("joi");
 class StatsService {
     /**
@@ -116,5 +117,5 @@ class StatsService {
         this.stats = {};
     }
 }
-exports.default = StatsService;
+exports.StatsService = StatsService;
 //# sourceMappingURL=index.js.map
