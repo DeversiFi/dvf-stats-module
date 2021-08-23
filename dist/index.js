@@ -40,6 +40,8 @@ class StatsService {
         for (const key of serviceKeysList) {
             const statKey = `${serviceName}_${key}`;
             statsKeys[statKey] = statKey;
+            // Also, initialize each key with value of 0.
+            this.setStat(statKey, 0);
         }
         return Object.freeze(statsKeys);
     }
