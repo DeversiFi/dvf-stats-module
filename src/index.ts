@@ -4,7 +4,7 @@ import { Stats, StatsKeys } from './types';
 class StatsService {
   private static instance: StatsService;
   private stats: Stats;
-  public statsKeys: StatsKeys;
+  public statsKeys: StatsKeys | [];
 
   /**
    * This class implements the Singleton design pattern. Therefore, actually assign its initialized obj to a property
@@ -13,11 +13,11 @@ class StatsService {
    * @param {string[]}  metricKeysList
    * @return {StatsService}
    */
-  constructor(metricKeysList: string[]) {
+  constructor(metricKeysList: string[] = undefined) {
     if (!StatsService.instance) {
       this.stats = {};
       // The object holding the stats keys for the service utilizing this lib
-      this.statsKeys = this.constructStatsKeysObj(metricKeysList);
+      this.statsKeys = metricKeysList ? this.constructStatsKeysObj(metricKeysList) : [];
       StatsService.instance = this;
     }
 

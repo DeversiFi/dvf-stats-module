@@ -27,11 +27,11 @@ class StatsService {
      * @param {string[]}  metricKeysList
      * @return {StatsService}
      */
-    constructor(metricKeysList) {
+    constructor(metricKeysList = undefined) {
         if (!StatsService.instance) {
             this.stats = {};
             // The object holding the stats keys for the service utilizing this lib
-            this.statsKeys = this.constructStatsKeysObj(metricKeysList);
+            this.statsKeys = metricKeysList ? this.constructStatsKeysObj(metricKeysList) : [];
             StatsService.instance = this;
         }
         return StatsService.instance;
