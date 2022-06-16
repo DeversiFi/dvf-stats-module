@@ -65,4 +65,20 @@ describe('stats service', function () {
       }
     });
   })
+
+  it('Prometheus metrics are exposed and usable', async function () {
+    const gauge = new statsService.promCient.Gauge({
+      name: 'gauge_metric',
+      help: 'gauge_help',
+    })
+
+    gauge.set(10)
+    gauge.inc(5)
+    gauge.dec(2)
+
+    const result = await statsService.promCollect()
+    result.should.equal(`# HELP gauge_metric gauge_help
+# TYPE gauge_metric gauge
+gauge_metric 13\n`)
+  })
 })

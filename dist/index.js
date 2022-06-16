@@ -19,6 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 const Joi = __importStar(require("joi"));
+const client = __importStar(require("prom-client"));
 class StatsService {
     /**
      * This class implements the Singleton design pattern. Therefore, actually assign its initialized obj to a property
@@ -121,6 +122,15 @@ class StatsService {
         return { stats: this.stats };
     }
     /**
+     * Expose prometheus client for full support
+     */
+    get promCient() {
+        return client;
+    }
+    async promCollect() {
+        return client.register.metrics();
+    }
+    /**
      * Clears the `stats` in-mem object.
      *
      * NOTE: Used for automated tests only!
@@ -131,5 +141,6 @@ class StatsService {
         this.stats = {};
     }
 }
+StatsService.promClient = client;
 module.exports = StatsService;
 //# sourceMappingURL=index.js.map

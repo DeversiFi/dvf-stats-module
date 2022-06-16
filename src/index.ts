@@ -1,8 +1,10 @@
 import * as Joi from 'joi'
 import { Stats, StatsKeys } from './types';
+import * as client from 'prom-client';
 
 class StatsService {
   private static instance: StatsService;
+  private static promClient = client;
   private stats: Stats;
   public statsKeys: StatsKeys | [];
 
@@ -116,6 +118,17 @@ class StatsService {
    */
   getAllStats(): { stats: Stats } {
     return { stats: this.stats };
+  }
+
+  /**
+   * Expose prometheus client for full support
+   */
+  get promCient() {
+    return client
+  }
+
+  async promCollect() {
+    return client.register.metrics()
   }
 
   /**
